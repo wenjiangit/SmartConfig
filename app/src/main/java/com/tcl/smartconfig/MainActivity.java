@@ -1,5 +1,6 @@
 package com.tcl.smartconfig;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
@@ -51,5 +52,9 @@ public class MainActivity extends AppCompatActivity implements ConfigStateListen
     @Override
     public void onConfigFinish(ConfigResult result) {
         Log.i(TAG, "onConfigFinish: " + result);
+    }
+
+    public void connectWifi(View view) {
+        startActivity(new Intent(this,WifiActivity.class));
     }
 }
