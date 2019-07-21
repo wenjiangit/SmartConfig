@@ -1,5 +1,9 @@
 package com.tcl.smartconfig.sdk.action;
 
+import android.util.Log;
+
+import static com.tcl.smartconfig.sdk.Const.TAG;
+
 /**
  * Description GetBindCodeAction
  * <p>
@@ -7,21 +11,28 @@ package com.tcl.smartconfig.sdk.action;
  *
  * @author wenjianes@163.com
  */
-public class GetBindCodeAction extends BaseAction<String> {
-    public GetBindCodeAction(long timeout) {
-        super(timeout);
+public class GetBindCodeAction extends BaseAction {
+
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        Log.i(TAG, "开始获取BindCode。。。 ");
     }
 
     @Override
     public void dispose() {
 
+        Log.i(TAG, "GetBindCodeAction dispose: ");
+
     }
 
-    @Override
-    public String call() throws Exception {
 
+
+
+    @Override
+    protected void doAction() throws Exception {
         Thread.sleep(3000);
 
-        return "bindcode";
     }
 }

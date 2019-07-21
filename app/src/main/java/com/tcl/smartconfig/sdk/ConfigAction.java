@@ -9,7 +9,7 @@ import java.util.concurrent.Callable;
  *
  * @author wenjianes@163.com
  */
-public interface ConfigAction<V> extends Callable<V> {
+public interface ConfigAction extends Callable<Void> {
 
     /**
      * 取消，释放资源
@@ -22,4 +22,9 @@ public interface ConfigAction<V> extends Callable<V> {
      * @return
      */
     long timeout();
+
+    /**
+     * 配网上下文
+     */
+    void attachContext(ConfigContext context);
 }

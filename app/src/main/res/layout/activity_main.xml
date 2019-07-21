@@ -26,5 +26,13 @@
         android:onClick="connectWifi"
         android:text="连接wifi" />
 
+     <Button
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:onClick="udp"
+        android:text="udp发送" />
+
+
+
 
 </LinearLayout>

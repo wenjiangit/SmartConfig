@@ -1,8 +1,21 @@
 package com.tcl.smartconfig.sdk;
 
-import android.util.Log;
+import com.tcl.smartconfig.sdk.action.BackToRouteAction;
+import com.tcl.smartconfig.sdk.action.BindDeviceAction;
+import com.tcl.smartconfig.sdk.action.ConnectApAction;
+import com.tcl.smartconfig.sdk.action.FindDeviceAction;
+import com.tcl.smartconfig.sdk.action.GetBindCodeAction;
+import com.tcl.smartconfig.sdk.action.SendRouteInfoAction;
 
-import static com.tcl.smartconfig.sdk.Const.TAG;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.CancellationException;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 
 /**
  * Description TclConfigEngine
@@ -13,55 +26,68 @@ import static com.tcl.smartconfig.sdk.Const.TAG;
  */
 public class TclConfigEngine implements ConfigEngine {
 
-    private TclConfigFlow mTclFlow = new TclConfigFlowImpl();
+    private ExecutorService mExecutor = Executors.newSingleThreadExecutor();
+
+    private final List<Future> mFutureList = new ArrayList<>();
+
+    private static final List<ConfigAction> ACTIONS = new ArrayList<>();
+
+    static {
+        ACTIONS.add(new GetBindCodeAction());
+        ACTIONS.add(new ConnectApAction());
+        ACTIONS.add(new SendRouteInfoAction());
+        ACTIONS.add(new BackToRouteAction());
+        ACTIONS.add(new FindDeviceAction());
+        ACTIONS.add(new BindDeviceAction());
+    }
 
 
     @Override
-    public ConfigResult performConfig(ConfigClient client) throws ConfigException {
+    public ConfigResult performConfig(ConfigContext context) throws ConfigException {
         try {
-            mTclFlow.init(client.context,client.timeout);
-
-            Log.i(TAG, "获取BindCode。。。");
-
-            client.dispatcher.postState(ConfigState.GET_BIND_CODE);
-            mTclFlow.getBindCode();
-
-            Log.i(TAG, "开始连接设备热点。。。");
-
-            client.dispatcher.postState(ConfigState.CONNECT_AP);
-            mTclFlow.connectAp(client.apSSID, client.apPwd);
-
-            Log.i(TAG, "开始发送路由信息。。。");
-
-            client.dispatcher.postState(ConfigState.SEND_ROUTE_INFO);
-            mTclFlow.sendRouteInfo(client.routeSSID, client.routePwd);
-
-            Log.i(TAG, "开始回连路由。。。");
-
-            client.dispatcher.postState(ConfigState.BACK_TO_ROUTE);
-            mTclFlow.backToRouter(client.routeSSID, client.routePwd);
-
-            Log.i(TAG, "开始搜索设备。。。");
-
-            client.dispatcher.postState(ConfigState.FIND_DEVICE);
-            mTclFlow.findDevice();
-
-            Log.i(TAG, "开始绑定设备。。。");
-
-            client.dispatcher.postState(ConfigState.BIND_DEVICE);
-            mTclFlow.bindDevice();
-
-            return ConfigResult.success(mTclFlow.getResult());
+            for (ConfigAction action : ACTIONS) {
+                action.attachContext(context);
+                executeAction(action);
+            }
+            return ConfigResult.success(context.result);
         } catch (ConfigException e) {
             e.printStackTrace();
             throw e;
         } finally {
-            mTclFlow.dispose();
+            dispose();
         }
     }
 
     @Override
     public void dispose() {
-        mTclFlow.dispose();
+        for (Future future : mFutureList) {
+            if (!future.isCancelled()) {
+                future.cancel(true);
+            }
+        }
+        mFutureList.clear();
     }
+
+    private void executeAction(ConfigAction action) throws ConfigException {
+        final Future future = mExecutor.submit(action);
+        mFutureList.add(future);
+        try {
+            future.get(action.timeout(), TimeUnit.MILLISECONDS);
+        } catch (ExecutionException e) {
+            e.printStackTrace();
+            throw ConfigException.error(e.getMessage());
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+            throw ConfigException.interrupt(e.getMessage());
+        } catch (TimeoutException e) {
+            e.printStackTrace();
+            throw ConfigException.timeout(e.getMessage());
+        } catch (CancellationException e) {
+            e.printStackTrace();
+            throw ConfigException.cancel(e.getMessage());
+        } finally {
+            action.dispose();
+        }
+    }
+
 }

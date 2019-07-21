@@ -52,37 +52,37 @@ public class TclConfigFlowImpl implements TclConfigFlow {
 
     @Override
     public void getBindCode() throws ConfigException {
-        mBindCode = executeAction(new GetBindCodeAction(remain));
+        executeAction(new GetBindCodeAction());
         computeRemain(false);
     }
 
     @Override
     public void connectAp(String ssid, String pwd) throws ConfigException {
-        executeAction(new ConnectApAction(ssid, pwd, remain));
+        executeAction(new ConnectApAction());
         computeRemain(false);
     }
 
     @Override
     public void sendRouteInfo(String ssid, String pwd) throws ConfigException {
-        executeAction(new SendRouteInfoAction(remain));
+        executeAction(new SendRouteInfoAction());
         computeRemain(false);
     }
 
     @Override
     public void backToRouter(String ssid, String pwd) throws ConfigException {
-        executeAction(new BackToRouteAction(remain));
+        executeAction(new BackToRouteAction());
         computeRemain(false);
     }
 
     @Override
     public void findDevice() throws ConfigException {
-        mDevId = executeAction(new FindDeviceAction(remain));
+        executeAction(new FindDeviceAction());
         computeRemain(false);
     }
 
     @Override
     public void bindDevice() throws ConfigException {
-        executeAction(new BindDeviceAction(remain));
+        executeAction(new BindDeviceAction());
         computeRemain(true);
     }
 
@@ -103,11 +103,11 @@ public class TclConfigFlowImpl implements TclConfigFlow {
 
 
     @SuppressWarnings("unchecked")
-    private <T> T executeAction(ConfigAction<T> action) throws ConfigException {
+    private void executeAction(ConfigAction action) throws ConfigException {
         final Future future = mExecutor.submit(action);
         mFutureList.add(future);
         try {
-            return (T) future.get(action.timeout(), TimeUnit.MILLISECONDS);
+            future.get(action.timeout(), TimeUnit.MILLISECONDS);
         } catch (ExecutionException e) {
             e.printStackTrace();
             throw ConfigException.error(e.getMessage());

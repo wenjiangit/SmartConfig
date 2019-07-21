@@ -13,11 +13,11 @@ public interface ConfigEngine {
     /**
      * 执行配网
      *
-     * @param client
+     * @param context
      * @return
      * @throws ConfigException
      */
-    ConfigResult performConfig(ConfigClient client) throws ConfigException;
+    ConfigResult performConfig(ConfigContext context) throws ConfigException;
 
 
     /**

@@ -20,26 +20,26 @@ public class MainActivity extends AppCompatActivity implements ConfigStateListen
 
     private static final String TAG = "MainActivity";
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         mClient = new ConfigClient.Builder(this)
-                .setApPwd("111")
-                .setApSSID("tcl_wifi")
-                .setRoutePwd("addda")
-                .setRouteSSID("dadd")
-                .timeout(60_000)
-                .configListener(this)
                 .build();
     }
 
     public void stopConfig(View view) {
-        mClient.dispose();
+//        mClient.dispose();
     }
 
     public void startConfig(View view) {
-        mClient.startConfig();
+
+//        ConfigRequest request = new ConfigRequest.Builder(this)
+//                .build();
+//
+//        mClient.startConfig(request);
+
 
     }
 
@@ -55,6 +55,10 @@ public class MainActivity extends AppCompatActivity implements ConfigStateListen
     }
 
     public void connectWifi(View view) {
-        startActivity(new Intent(this,WifiActivity.class));
+        startActivity(new Intent(this, WifiActivity.class));
+    }
+
+    public void udp(View view) {
+        startActivity(new Intent(this, UdpActivity.class));
     }
 }

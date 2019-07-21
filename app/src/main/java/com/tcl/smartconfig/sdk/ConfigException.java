@@ -22,19 +22,19 @@ public class ConfigException extends Exception {
     }
 
 
-    static ConfigException error(String message) {
+    public static ConfigException error(String message) {
         return new ConfigException(message, ERROR);
     }
 
-    static ConfigException timeout(String message) {
+    public static ConfigException timeout(String message) {
         return new ConfigException(message, TIMEOUT);
     }
 
-    static ConfigException cancel(String message) {
+    public static ConfigException cancel(String message) {
         return new ConfigException(message, CANCELLED);
     }
 
-    static ConfigException interrupt(String message) {
+    public static ConfigException interrupt(String message) {
         return new ConfigException(message, INTERRUPT);
     }
 

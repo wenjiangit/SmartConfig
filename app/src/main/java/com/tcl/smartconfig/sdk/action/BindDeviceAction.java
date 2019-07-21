@@ -1,5 +1,9 @@
 package com.tcl.smartconfig.sdk.action;
 
+import android.util.Log;
+
+import static com.tcl.smartconfig.sdk.Const.TAG;
+
 /**
  * Description BindDeviceAction
  * <p>
@@ -7,20 +11,23 @@ package com.tcl.smartconfig.sdk.action;
  *
  * @author wenjianes@163.com
  */
-public class BindDeviceAction extends BaseAction<String> {
-    public BindDeviceAction(long timeout) {
-        super(timeout);
+public class BindDeviceAction extends BaseAction {
+
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        Log.i(TAG, "开始绑定设备。。。 ");
     }
 
     @Override
     public void dispose() {
-
+        Log.i(TAG, "BindDeviceAction dispose: ");
     }
 
-    @Override
-    public String call() throws Exception {
 
-        Thread.sleep(10_000);
-        return null;
+    @Override
+    protected void doAction() throws Exception {
+
     }
 }

@@ -1,5 +1,9 @@
 package com.tcl.smartconfig.sdk.action;
 
+import android.util.Log;
+
+import static com.tcl.smartconfig.sdk.Const.TAG;
+
 /**
  * Description SendRouteInfoAction
  * <p>
@@ -7,24 +11,26 @@ package com.tcl.smartconfig.sdk.action;
  *
  * @author wenjianes@163.com
  */
-public class SendRouteInfoAction extends BaseAction<String> {
+public class SendRouteInfoAction extends BaseAction {
 
 
-    private boolean flag = true;
-
-    public SendRouteInfoAction(long timeout) {
-        super(timeout);
+    @Override
+    protected void onStart() {
+        super.onStart();
+        Log.i(TAG, "开始发送路由信息。。。");
     }
 
     @Override
-    public String call() throws Exception {
-        Thread.sleep(3000);
+    protected void doAction() throws Exception {
 
-        return "";
+        Thread.sleep(10_000);
+
     }
 
     @Override
     public void dispose() {
+
+        Log.i(TAG, "SendRouteInfoAction dispose: ");
 
     }
 }

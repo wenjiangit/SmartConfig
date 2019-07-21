@@ -1,5 +1,11 @@
 package com.tcl.smartconfig.sdk.action;
 
+import android.util.Log;
+
+import okhttp3.OkHttpClient;
+
+import static com.tcl.smartconfig.sdk.Const.TAG;
+
 /**
  * Description ConnectApAction
  * <p>
@@ -7,27 +13,31 @@ package com.tcl.smartconfig.sdk.action;
  *
  * @author wenjianes@163.com
  */
-public class ConnectApAction extends BaseAction<Void> {
+public class ConnectApAction extends BaseAction {
 
     String ssid;
     String pwd;
 
-    public ConnectApAction(String ssid, String pwd,long timeout) {
-        super(timeout);
-        this.ssid = ssid;
-        this.pwd = pwd;
+    @Override
+    protected void onStart() {
+        super.onStart();
+        Log.i(TAG, "开始连接wifi热点。。。");
+        pwd = mContext.request.apPwd;
+        ssid = mContext.request.apSSID;
     }
 
-
     @Override
-    public Void call() throws Exception {
-        Thread.sleep(2000);
-        return null;
+    protected void doAction() throws Exception {
+
+
+        Thread.sleep(10_000);
+
+
     }
 
     @Override
     public void dispose() {
-
+        Log.i(TAG, "ConnectApAction dispose: ");
     }
 
 }
